@@ -2,6 +2,7 @@ from data.database import Database
 from actions.view import View
 from actions.add import Add
 from actions.delete import Delete
+from actions.update import Update
 
 class PasswordManager:
     def __init__(self):
@@ -28,7 +29,7 @@ class PasswordManager:
             Delete(self.db)
             pass
         elif action == '4':
-            # TODO: Update(self.db)
+            Update(self.db)
             pass
         elif action == '5':
             self.db.close()

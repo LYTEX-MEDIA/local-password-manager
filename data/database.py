@@ -77,5 +77,23 @@ class Database:
         self.conn.commit()
     
     
+    def update_server(self, name, ip, username, password):
+        encoded_password = base64.b64encode(password.encode()).decode()
+        self.cursor.execute('''UPDATE servers SET ip=?, username=?, password=? WHERE name=?''', (ip, username, encoded_password, name))
+        self.conn.commit()
+    
+    
+    def update_email(self, name, email, password):
+        encoded_password = base64.b64encode(password.encode()).decode()
+        self.cursor.execute('''UPDATE emails SET email=?, password=? WHERE name=?''', (email, encoded_password, name))
+        self.conn.commit()
+    
+    
+    def update_social(self, name, username, email, password):
+        encoded_password = base64.b64encode(password.encode()).decode()
+        self.cursor.execute('''UPDATE socials SET username=?, email=?, password=? WHERE name=?''', (username, email, encoded_password, name))
+        self.conn.commit()
+    
+    
     def close(self):
         self.conn.close()
