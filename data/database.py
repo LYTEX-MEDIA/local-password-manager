@@ -34,6 +34,24 @@ class Database:
     def add_social(self, name, username, email, password):
         self.cursor.execute('''INSERT INTO socials(name, username, email, password) VALUES(?,?,?,?)''', (name, username, email, password))
         self.conn.commit()
+
+    
+    def view_server(self, name):
+        self.cursor.execute('''SELECT * FROM servers WHERE name=?''', (name,))
+        result = self.cursor.fetchone()
+        print(f'\n Name: {result[1]}\n IP: {result[2]}\n Username: {result[3]}\n Password: "{result[4]}"\n')
+    
+    
+    def view_email(self, name):
+        self.cursor.execute('''SELECT * FROM emails WHERE name=?''', (name,))
+        result = self.cursor.fetchone()
+        print(f'\n Name: {result[1]}\n Email: {result[2]}\n Password: "{result[3]}"\n')
+    
+    
+    def view_social(self, name):
+        self.cursor.execute('''SELECT * FROM socials WHERE name=?''', (name,))
+        result = self.cursor.fetchone()
+        print(f'\n Name: {result[1]}\n Username: {result[2]}\n Email: {result[3]}\n Password: "{result[4]}\n"')
     
     
     def close(self):

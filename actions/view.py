@@ -20,16 +20,9 @@ class View:
 
     def email(self):
         name = input('Name: ')
-        email = input('Email: ')
-        password = input('Password: ')
-        self.db.add_email(name, email, password)
-        print(f'Email hinzugefügt! {name} - {email} - [password]')
+        self.db.view_email(name)
 
 
     def social(self):
         name = input('Name: ')
-        username = input('Username: ')
-        email = input('Email: ')
-        password = input('Password: ')
-        self.db.add_social(name, username, email, password)
-        print(f'Social Media Konto hinzugefügt! {name} - {email} - {username} - [password]')
+        self.db.view_social(name)
