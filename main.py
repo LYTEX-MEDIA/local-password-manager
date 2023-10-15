@@ -8,6 +8,11 @@ class PasswordManager:
     def __init__(self):
         self.db = Database('db.sqlite3')
         self.create_tables()
+        self.display_welcome_message()
+        self.select_action()
+        
+        
+    def display_welcome_message(self):
         print("""
               LYTEX MEDIA | Password Manager
               
@@ -16,7 +21,6 @@ class PasswordManager:
               Aber trotzdem nützlich für mich. Pass einfach auf,
               dass niemand Zugriff auf die Dateien bekommt!
               """)
-        self.select_action()
 
 
     def select_action(self):
@@ -46,4 +50,6 @@ class PasswordManager:
 
 
 if __name__ == '__main__':
-    PasswordManager()
+    manager = PasswordManager()
+    while True:
+        manager.select_action()
