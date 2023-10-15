@@ -11,7 +11,7 @@ class PasswordManager:
               LYTEX MEDIA | Password Manager
               
               yoo dieses Skriptchen ist nicht sonderlich sicher.
-              Die Passwörter werden im Klartext in der Datenbank gespeichert. xD
+              Die Passwörter werden fast im Klartext in der Datenbank gespeichert. xD
               Aber trotzdem nützlich für mich. Pass einfach auf,
               dass niemand Zugriff auf die Dateien bekommt!
               """)
@@ -46,6 +46,3 @@ class PasswordManager:
 
 if __name__ == '__main__':
     PasswordManager()
-    
-    #while True:
-        #PasswordManager().select_action()
