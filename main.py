@@ -1,4 +1,5 @@
 from data.database import Database
+from actions.view import View
 from actions.add import Add
 
 class PasswordManager:
@@ -9,15 +10,17 @@ class PasswordManager:
 
 
     def select_action(self):
-        action = input('Was willst du tun? (1) Add, (2) Update, (3) Delete, (4) View, (5) Exit: ')
+        action = input('Was willst du tun? (1) View, (2) Add, (3) Delete, (4) Update, (5) Exit: ')
         if action == '1':
-            Add(self.db)
+            View(self.db)
         elif action == '2':
-            self.update()
+            Add(self.db)
         elif action == '3':
-            self.delete()
+            # TODO: Delete(self.db)
+            pass
         elif action == '4':
-            self.view()
+            # TODO: Update(self.db)
+            pass
         elif action == '5':
             self.db.close()
             exit()

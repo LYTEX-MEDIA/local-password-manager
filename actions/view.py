@@ -1,8 +1,7 @@
-
-class Add:
+class View:
     def __init__(self, db):
         self.db = db
-        self.action = input('Was willst du hinzufügen? (1) Server, (2) Email, (3) Social Media: ')
+        self.action = input('In welche Kategorie möchtest du? (1) Server, (2) Email, (3) Social Media: ')
         if self.action == '1':
             self.server()
         elif self.action == '2':
@@ -16,11 +15,7 @@ class Add:
 
     def server(self):
         name = input('Name: ')
-        ip = input('IP Adresse: ')
-        username = input('Username: ')
-        password = input('Password: ')
-        self.db.add_server(name, ip, username, password)
-        print(f'Server hinzugefügt! {name} - {ip} - {username} - [password]')
+        self.db.view_server(name)
 
 
     def email(self):

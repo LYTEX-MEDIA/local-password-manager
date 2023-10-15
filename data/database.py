@@ -25,5 +25,16 @@ class Database:
         self.cursor.execute('''INSERT INTO servers(name, ip, username, password) VALUES(?,?,?,?)''', (name, ip, username, password))
         self.conn.commit()
     
+    
+    def add_email(self, name, email, password):
+        self.cursor.execute('''INSERT INTO emails(name, email, password) VALUES(?,?,?)''', (name, email, password))
+        self.conn.commit()
+    
+    
+    def add_social(self, name, username, email, password):
+        self.cursor.execute('''INSERT INTO socials(name, username, email, password) VALUES(?,?,?,?)''', (name, username, email, password))
+        self.conn.commit()
+    
+    
     def close(self):
         self.conn.close()
