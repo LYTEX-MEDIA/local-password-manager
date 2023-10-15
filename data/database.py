@@ -54,5 +54,20 @@ class Database:
         print(f'\n Name: {result[1]}\n Username: {result[2]}\n Email: {result[3]}\n Password: "{result[4]}\n"')
     
     
+    def delete_server(self, name):
+        self.cursor.execute('''DELETE FROM servers WHERE name=?''', (name,))
+        self.conn.commit()
+
+    
+    def delete_email(self, name):
+        self.cursor.execute('''DELETE FROM emails WHERE name=?''', (name,))
+        self.conn.commit()
+    
+    
+    def delete_social(self, name):
+        self.cursor.execute('''DELETE FROM socials WHERE name=?''', (name,))
+        self.conn.commit()
+    
+    
     def close(self):
         self.conn.close()

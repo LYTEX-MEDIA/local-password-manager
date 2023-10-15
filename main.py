@@ -1,12 +1,21 @@
 from data.database import Database
 from actions.view import View
 from actions.add import Add
+from actions.delete import Delete
 
 class PasswordManager:
     def __init__(self):
         self.db = Database('db.sqlite3')
-        
         self.create_tables()
+        print("""
+              LYTEX MEDIA | Password Manager
+              
+              yoo dieses Skriptchen ist nicht sonderlich sicher.
+              Die Passwörter werden im Klartext in der Datenbank gespeichert. xD
+              Aber trotzdem nützlich für mich. Pass einfach auf,
+              dass niemand Zugriff auf die Dateien bekommt!
+              """)
+        self.select_action()
 
 
     def select_action(self):
@@ -16,7 +25,7 @@ class PasswordManager:
         elif action == '2':
             Add(self.db)
         elif action == '3':
-            # TODO: Delete(self.db)
+            Delete(self.db)
             pass
         elif action == '4':
             # TODO: Update(self.db)
@@ -38,5 +47,5 @@ class PasswordManager:
 if __name__ == '__main__':
     PasswordManager()
     
-    while True:
-        PasswordManager().select_action()
+    #while True:
+        #PasswordManager().select_action()
