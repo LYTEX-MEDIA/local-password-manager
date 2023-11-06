@@ -1,0 +1,25 @@
+{
+    "servers": {
+        "fields": {
+            "name": "TEXT",
+            "ip": "TEXT",
+            "username": "TEXT",
+            "password": "TEXT"
+        }
+    },
+    "emails": {
+        "fields": {
+            "name": "TEXT",
+            "email": "TEXT",
+            "password": "TEXT"
+        }
+    },
+    "socialmedia": {
+        "fields": {
+            "name": "TEXT",
+            "username": "TEXT",
+            "email": "TEXT",
+            "password": "TEXT"
+        }
+    }
+}

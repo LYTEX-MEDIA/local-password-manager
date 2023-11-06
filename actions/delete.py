@@ -1,31 +1,23 @@
 class Delete:
     def __init__(self, db):
         self.db = db
-        self.action = input('In welche Kategorie möchtest du? (1) Server, (2) Email, (3) Social Media: ')
-        if self.action == '1':
-            self.server()
-        elif self.action == '2':
-            self.email()
-        elif self.action == '3':
-            self.social()
-        else:
+        self.category_names = self.db.config.keys()
+        self.category = self.choose_category()
+        self.collect_data_and_delete()
+
+
+    def choose_category(self):
+        options = "\n".join(f"({i}) {category}" for i, category in enumerate(self.category_names, 1))
+        choice = input(f'In welche Kategorie möchtest du?\n{options}\nWähle eine Nummer: ')
+        try:
+            selected = list(self.category_names)[int(choice) - 1]
+            return selected
+        except (IndexError, ValueError):
             print('Ungültige Eingabe!\n')
-            self.__init__()
+            return self.choose_category()
 
 
-    def server(self):
-        name = input('Name: ')
-        self.db.delete_server(name)
-        print(f'Server Account {name} gelöscht!\n')
-
-
-    def email(self):
-        name = input('Name: ')
-        self.db.delete_email(name)
-        print(f'Email Account {name} gelöscht!\n')
-
-
-    def social(self):
-        name = input('Name: ')
-        self.db.delete_social(name)
-        print(f'Social Media Account {name} gelöscht!\n')
+    def collect_data_and_delete(self):
+        identifier = input('Name des zu löschenden Eintrags: ')
+        self.db.delete_entry(self.category, identifier)
+        print(f'{self.category.capitalize()} Eintrag "{identifier}" gelöscht!\n')

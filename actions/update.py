@@ -1,39 +1,27 @@
 class Update:
     def __init__(self, db):
         self.db = db
-        self.action = input('Was willst du aktualisieren? (1) Server, (2) Email, (3) Social Media: ')
-        if self.action == '1':
-            self.server()
-        elif self.action == '2':
-            self.email()
-        elif self.action == '3':
-            self.social()
-        else:
+        self.category = self.choose_category()
+        self.collect_data_and_update()
+
+
+    def choose_category(self):
+        options = "\n".join(f"({i}) {category}" for i, category in enumerate(self.db.config.keys(), 1))
+        choice = input(f'Was willst du aktualisieren?\n{options}\nWähle eine Nummer: ')
+        try:
+            selected = list(self.db.config.keys())[int(choice) - 1]
+            return selected
+        except (IndexError, ValueError):
             print('Ungültige Eingabe!\n')
-            self.__init__()
+            return self.choose_category()
 
 
-    def server(self):
-        name = input('Name: ')
-        ip = input('IP Adresse: ')
-        username = input('Username: ')
-        password = input('Password: ')
-        self.db.update_server(name, ip, username, password)
-        print(f'Server aktualisiert! {name} - {ip} - {username} - [password]')
-
-
-    def email(self):
-        name = input('Name: ')
-        email = input('Email: ')
-        password = input('Password: ')
-        self.db.update_email(name, email, password)
-        print(f'Email aktualisiert! {name} - {email} - [password]')
-
-
-    def social(self):
-        name = input('Name: ')
-        username = input('Username: ')
-        email = input('Email: ')
-        password = input('Password: ')
-        self.db.update_social(name, username, email, password)
-        print(f'Social Media aktualisiert! {name} - {username} - {email} - [password]')
+    def collect_data_and_update(self):
+        identifier = input('Name des zu aktualisierenden Eintrags: ')
+        data = {}
+        for field in self.db.config[self.category]['fields']:
+            if field != 'id':  # id is auto-incremented
+                new_value = input(f'Neuer Wert für {field.capitalize()}: ')
+                data[field] = new_value
+        self.db.update_entry(self.category, identifier, **data)
+        print(f'{self.category.capitalize()} aktualisiert!')

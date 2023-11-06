@@ -1,28 +1,21 @@
 class View:
     def __init__(self, db):
         self.db = db
-        self.action = input('In welche Kategorie möchtest du? (1) Server, (2) Email, (3) Social Media: ')
-        if self.action == '1':
-            self.server()
-        elif self.action == '2':
-            self.email()
-        elif self.action == '3':
-            self.social()
-        else:
+        self.category = self.choose_category()
+        self.view_entry()
+
+
+    def choose_category(self):
+        options = "\n".join(f"({i}) {category}" for i, category in enumerate(self.db.config.keys(), 1))
+        choice = input(f'In welche Kategorie möchtest du?\n{options}\nWähle eine Nummer: ')
+        try:
+            selected = list(self.db.config.keys())[int(choice) - 1]
+            return selected
+        except (IndexError, ValueError):
             print('Ungültige Eingabe!\n')
-            self.__init__()
+            return self.choose_category()
 
 
-    def server(self):
-        name = input('Name: ')
-        self.db.view_server(name)
-
-
-    def email(self):
-        name = input('Name: ')
-        self.db.view_email(name)
-
-
-    def social(self):
-        name = input('Name: ')
-        self.db.view_social(name)
+    def view_entry(self):
+        identifier = input('Name des Eintrags: ')
+        self.db.view_entry(self.category, identifier)

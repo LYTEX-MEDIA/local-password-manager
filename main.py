@@ -3,15 +3,17 @@ from actions.view import View
 from actions.add import Add
 from actions.delete import Delete
 from actions.update import Update
+from data.categories import Categories
 
 class PasswordManager:
     def __init__(self):
         self.db = Database('db.sqlite3')
+        self.categories = Categories()
         self.create_tables()
         self.display_welcome_message()
         self.select_action()
-        
-        
+       
+ 
     def display_welcome_message(self):
         print("""
               LYTEX MEDIA | Password Manager
@@ -25,28 +27,27 @@ class PasswordManager:
 
     def select_action(self):
         action = input('Was willst du tun? (1) View, (2) Add, (3) Delete, (4) Update, (5) Exit: ')
-        if action == '1':
-            View(self.db)
-        elif action == '2':
-            Add(self.db)
-        elif action == '3':
-            Delete(self.db)
-            pass
-        elif action == '4':
-            Update(self.db)
-            pass
-        elif action == '5':
-            self.db.close()
-            exit()
-        else:
+        action_map = {
+            '1': View,
+            '2': Add,
+            '3': Delete,
+            '4': Update,
+            '5': exit
+        }
+        try:
+            if action == '5':
+                self.db.close()
+                action_map[action]()
+            else:
+                action_map[action](self.db)
+        except KeyError:
             print('Ungültige Eingabe!')
             self.select_action()
 
 
     def create_tables(self):
-        self.db.create_email_tables()
-        self.db.create_social_tables()
-        self.db.create_server_tables()
+        for category_name, category_info in self.categories.get_all_categories().items():
+            self.db.create_table(category_name, category_info['fields'])
 
 
 if __name__ == '__main__':

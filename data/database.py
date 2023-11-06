@@ -1,99 +1,55 @@
 import sqlite3
 import base64
+import json
 
 class Database:
     def __init__(self, db_name):
         self.conn = sqlite3.connect(db_name)
         self.cursor = self.conn.cursor()
+        self.load_config()
 
 
-    def create_email_tables(self):
-        self.cursor.execute('''CREATE TABLE IF NOT EXISTS emails(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, password TEXT)''')
+    def load_config(self):
+        with open('categories.json', 'r') as f:
+            self.config = json.load(f)
+
+
+    def create_table(self, category_name, fields):
+        fields_line = ', '.join([f"{name} {datatype}" for name, datatype in fields.items()])
+        self.cursor.execute(f'''CREATE TABLE IF NOT EXISTS {category_name}(id INTEGER PRIMARY KEY AUTOINCREMENT, {fields_line})''')
         self.conn.commit()
 
 
-    def create_social_tables(self):
-        self.cursor.execute('''CREATE TABLE IF NOT EXISTS socials(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, username TEXT, email TEXT, password TEXT)''')
+    def add_entry(self, category, **kwargs):
+        fields = ', '.join(kwargs.keys())
+        values = tuple(base64.b64encode(value.encode()).decode() if key == 'password' else value for key, value in kwargs.items())
+        placeholders = ', '.join('?' for _ in kwargs)
+        self.cursor.execute(f'''INSERT INTO {category}({fields}) VALUES({placeholders})''', values)
         self.conn.commit()
-    
-    
-    def create_server_tables(self):
-        self.cursor.execute('''CREATE TABLE IF NOT EXISTS servers(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, ip TEXT, username TEXT, password TEXT)''')
-        self.conn.commit()
-    
-    
-    def add_server(self, name, ip, username, password):
-        encoded_password = base64.b64encode(password.encode()).decode()
-        self.cursor.execute('''INSERT INTO servers(name, ip, username, password) VALUES(?,?,?,?)''',
-                            (name, ip, username, encoded_password))
-        self.conn.commit()
-    
-    
-    def add_email(self, name, email, password):
-        encoded_password = base64.b64encode(password.encode()).decode()
-        self.cursor.execute('''INSERT INTO emails(name, email, password) VALUES(?,?,?)''', (name, email, encoded_password))
-        self.conn.commit()
-    
-    
-    def add_social(self, name, username, email, password):
-        encoded_password = base64.b64encode(password.encode()).decode()
-        self.cursor.execute('''INSERT INTO socials(name, username, email, password) VALUES(?,?,?,?)''', (name, username, email, encoded_password))
-        self.conn.commit()
-    
-    
-    def view_server(self, name):
-        self.cursor.execute('''SELECT * FROM servers WHERE name=?''', (name,))
+
+
+    def view_entry(self, category, identifier):
+        self.cursor.execute(f'''SELECT * FROM {category} WHERE name=?''', (identifier,))
         result = self.cursor.fetchone()
-        decoded_password = base64.b64decode(result[4].encode()).decode()
-        print(f'\n Name: {result[1]}\n IP: {result[2]}\n Username: {result[3]}\n Password: "{decoded_password}"\n')
-        
-    
-    def view_email(self, name):
-        self.cursor.execute('''SELECT * FROM emails WHERE name=?''', (name,))
-        result = self.cursor.fetchone()
-        decoded_password = base64.b64decode(result[3].encode()).decode()
-        print(f'\n Name: {result[1]}\n Email: {result[2]}\n Password: "{decoded_password}"\n')
-    
-    
-    def view_social(self, name):
-        self.cursor.execute('''SELECT * FROM socials WHERE name=?''', (name,))
-        result = self.cursor.fetchone()
-        decoded_password = base64.b64decode(result[4].encode()).decode()
-        print(f'\n Name: {result[1]}\n Username: {result[2]}\n Email: {result[3]}\n Password: "{decoded_password}\n"')
-    
-    
-    def delete_server(self, name):
-        self.cursor.execute('''DELETE FROM servers WHERE name=?''', (name,))
+        if result:
+            fields = self.config[category]['fields'].keys()
+            values = [base64.b64decode(value.encode()).decode() if field == 'password' else value for field, value in zip(fields, result[1:])]
+            print("\n" + "\n".join(f"{field}: {value}" for field, value in zip(fields, values)) + "\n")
+        else:
+            print('Eintrag nicht gefunden.')
+
+
+    def delete_entry(self, category, identifier):
+        self.cursor.execute(f'''DELETE FROM {category} WHERE name=?''', (identifier,))
         self.conn.commit()
 
-    
-    def delete_email(self, name):
-        self.cursor.execute('''DELETE FROM emails WHERE name=?''', (name,))
+
+    def update_entry(self, category, identifier, **kwargs):
+        fields = ', '.join(f"{key}=?" for key in kwargs)
+        values = tuple(base64.b64encode(value.encode()).decode() if key == 'password' else value for key, value in kwargs.items()) + (identifier,)
+        self.cursor.execute(f'''UPDATE {category} SET {fields} WHERE name=?''', values)
         self.conn.commit()
-    
-    
-    def delete_social(self, name):
-        self.cursor.execute('''DELETE FROM socials WHERE name=?''', (name,))
-        self.conn.commit()
-    
-    
-    def update_server(self, name, ip, username, password):
-        encoded_password = base64.b64encode(password.encode()).decode()
-        self.cursor.execute('''UPDATE servers SET ip=?, username=?, password=? WHERE name=?''', (ip, username, encoded_password, name))
-        self.conn.commit()
-    
-    
-    def update_email(self, name, email, password):
-        encoded_password = base64.b64encode(password.encode()).decode()
-        self.cursor.execute('''UPDATE emails SET email=?, password=? WHERE name=?''', (email, encoded_password, name))
-        self.conn.commit()
-    
-    
-    def update_social(self, name, username, email, password):
-        encoded_password = base64.b64encode(password.encode()).decode()
-        self.cursor.execute('''UPDATE socials SET username=?, email=?, password=? WHERE name=?''', (username, email, encoded_password, name))
-        self.conn.commit()
-    
-    
+
+
     def close(self):
         self.conn.close()
