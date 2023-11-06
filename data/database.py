@@ -51,7 +51,7 @@ class Database:
     def view_email(self, name):
         self.cursor.execute('''SELECT * FROM emails WHERE name=?''', (name,))
         result = self.cursor.fetchone()
-        decoded_password = base64.b64decode(result[4].encode()).decode()
+        decoded_password = base64.b64decode(result[3].encode()).decode()
         print(f'\n Name: {result[1]}\n Email: {result[2]}\n Password: "{decoded_password}"\n')
     
     
