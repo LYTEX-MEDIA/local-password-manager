@@ -2,6 +2,7 @@
     "servers": {
         "fields": {
             "name": "TEXT",
+            "domain": "TEXT",
             "ip": "TEXT",
             "username": "TEXT",
             "password": "TEXT"
