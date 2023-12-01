@@ -9,12 +9,12 @@ class Add:
 
     def choose_category(self):
         options = "\n".join(f"({i}) {category}" for i, category in enumerate(self.category_names, 1))
-        choice = input(f'Was willst du hinzufügen?\n{options}\nWähle eine Nummer: ')
+        choice = input(f'Choose a category:\n{options}\n')
         try:
             selected = list(self.category_names)[int(choice) - 1]
             return selected
         except (IndexError, ValueError):
-            print('Ungültige Eingabe!\n')
+            print('Invalid action!\n')
             return self.choose_category()
 
 
@@ -24,4 +24,4 @@ class Add:
             if field != 'id':
                 data[field] = input(f'{field.capitalize()}: ')
         self.db.add_entry(self.category, **data)
-        print(f'{self.category.capitalize()} hinzugefügt! ' + " - ".join(f'[{field}]' for field in data))
+        print(f'{self.category.capitalize()} added! ' + " - ".join(f'[{field}]' for field in data))

@@ -8,16 +8,16 @@ class Delete:
 
     def choose_category(self):
         options = "\n".join(f"({i}) {category}" for i, category in enumerate(self.category_names, 1))
-        choice = input(f'In welche Kategorie möchtest du?\n{options}\nWähle eine Nummer: ')
+        choice = input(f'Choose a category:\n{options}\n')
         try:
             selected = list(self.category_names)[int(choice) - 1]
             return selected
         except (IndexError, ValueError):
-            print('Ungültige Eingabe!\n')
+            print('Invalid action!\n')
             return self.choose_category()
 
 
     def collect_data_and_delete(self):
-        identifier = input('Name des zu löschenden Eintrags: ')
+        identifier = input('Name of the entry to be deleted: ')
         self.db.delete_entry(self.category, identifier)
-        print(f'{self.category.capitalize()} Eintrag "{identifier}" gelöscht!\n')
+        print(f'{self.category.capitalize()} entry "{identifier}" deleted!\n')

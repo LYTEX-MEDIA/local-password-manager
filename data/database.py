@@ -1,5 +1,5 @@
+from cryptography.fernet import Fernet
 import sqlite3
-import base64
 import json
 
 class Database:
@@ -7,7 +7,13 @@ class Database:
         self.conn = sqlite3.connect(db_name)
         self.cursor = self.conn.cursor()
         self.load_config()
+        self.key = self.load_key()
+        self.cipher_suite = Fernet(self.key)
 
+
+    def load_key(self):
+        with open('secret.key', 'rb') as f:
+            return f.read()
 
     def load_config(self):
         with open('categories.json', 'r') as f:
@@ -20,9 +26,17 @@ class Database:
         self.conn.commit()
 
 
+    def encrypt(self, data):
+        return self.cipher_suite.encrypt(data.encode()).decode()
+
+
+    def decrypt(self, data):
+        return self.cipher_suite.decrypt(data.encode()).decode()
+
+
     def add_entry(self, category, **kwargs):
         fields = ', '.join(kwargs.keys())
-        values = tuple(base64.b64encode(value.encode()).decode() if key == 'password' else value for key, value in kwargs.items())
+        values = tuple(self.encrypt(value) if key == 'password' else value for key, value in kwargs.items())
         placeholders = ', '.join('?' for _ in kwargs)
         self.cursor.execute(f'''INSERT INTO {category}({fields}) VALUES({placeholders})''', values)
         self.conn.commit()
@@ -33,7 +47,7 @@ class Database:
         result = self.cursor.fetchone()
         if result:
             fields = self.config[category]['fields'].keys()
-            values = [base64.b64decode(value.encode()).decode() if field == 'password' else value for field, value in zip(fields, result[1:])]
+            values = [self.decrypt(value) if field == 'password' else value for field, value in zip(fields, result[1:])]
             print("\n" + "\n".join(f"{field}: {value}" for field, value in zip(fields, values)) + "\n")
         else:
             print('Eintrag nicht gefunden.')
@@ -46,7 +60,7 @@ class Database:
 
     def update_entry(self, category, identifier, **kwargs):
         fields = ', '.join(f"{key}=?" for key in kwargs)
-        values = tuple(base64.b64encode(value.encode()).decode() if key == 'password' else value for key, value in kwargs.items()) + (identifier,)
+        values = tuple(self.encrypt(value) if key == 'password' else value for key, value in kwargs.items()) + (identifier,)
         self.cursor.execute(f'''UPDATE {category} SET {fields} WHERE name=?''', values)
         self.conn.commit()
 

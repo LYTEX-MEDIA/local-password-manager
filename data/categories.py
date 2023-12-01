@@ -11,6 +11,7 @@ class Categories:
     def load_categories(self):
         if not self.filepath.is_file():
             return {}
+        
         with open(self.filename, 'r') as file:
             return json.load(file)
 
@@ -24,6 +25,7 @@ class Categories:
         if category_name in self.categories:
             print(f"Category '{category_name}' already exists.")
             return False
+        
         self.categories[category_name] = {"fields": fields}
         self.save_categories()
         return True
@@ -33,6 +35,7 @@ class Categories:
         if category_name not in self.categories:
             print(f"Category '{category_name}' does not exist.")
             return False
+        
         del self.categories[category_name]
         self.save_categories()
         return True
@@ -46,6 +49,7 @@ class Categories:
         if category_name not in self.categories:
             print(f"Category '{category_name}' does not exist.")
             return False
+        
         self.categories[category_name] = {"fields": fields}
         self.save_categories()
         return True

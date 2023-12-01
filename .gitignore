@@ -1,7 +1,10 @@
-# Database
+# Custom
 *.sqlite
 *.sqlite3
 *.db
+*.key
+key.txt
+secret.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
